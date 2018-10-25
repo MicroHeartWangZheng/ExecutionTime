@@ -34,7 +34,7 @@ namespace ExecutionTime
             await _next.Invoke(context);
 
             endTime = DateTime.Now;
-            _logger.LogWarning($@"接口:{context.Request.Path} 耗时:{(int)((endTime - startTime).Milliseconds)}ms");
+            _logger.LogTrace($@"接口:{context.Request.Path} 耗时:{(int)((endTime - startTime).Milliseconds)}ms");
         }
     }
 }

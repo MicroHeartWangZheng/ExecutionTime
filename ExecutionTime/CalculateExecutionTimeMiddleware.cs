@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ExecutionTime
@@ -10,8 +11,7 @@ namespace ExecutionTime
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
-        private DateTime startTime;
-        private DateTime endTime;
+        Stopwatch stopwatch;
         public CalculateExecutionTimeMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
             if (next == null)
@@ -30,11 +30,12 @@ namespace ExecutionTime
 
         public async Task Invoke(HttpContext context)
         {
-            startTime = DateTime.Now;
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
             await _next.Invoke(context);
 
-            endTime = DateTime.Now;
-            _logger.LogTrace($@"接口:{context.Request.Path} 耗时:{(int)((endTime - startTime).Milliseconds)}ms");
+            stopwatch.Stop();
+            _logger.LogWarning($@"接口{context.Request.Path}耗时{stopwatch.ElapsedMilliseconds}ms");
         }
     }
 }
